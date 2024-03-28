@@ -3,6 +3,30 @@
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
 
+const renderCountry = function (data, className = '') {
+  const languages = Object.values(data.languages);
+  const currencies = Object.values(data.currencies);
+  const html = ` <article class="country ${className}">
+    <img class="country__img" src="${data.flags.png}" />
+    <div class="country__data">
+      <h3 class="country__name">${data.altSpellings[2]}</h3>
+      <h4 class="country__region">${data.region}</h4>
+      <p class="country__row"><span>👫</span>${(
+        +data.population / 1000000
+      ).toFixed(1)}</p>
+      <p class="country__row"><span>🗣️</span>${languages[0]}</p>
+      <p class="country__row"><span>💰</span>${currencies[0].name}</p>
+    </div>
+  </article>`;
+
+  countriesContainer.insertAdjacentHTML('beforeend', html);
+  // countriesContainer.style.opacity = 1;
+};
+
+const renderError = function (msg) {
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  // countriesContainer.style.opacity = 1;
+};
 ///////////////////////////////////////
 // const getcountryDate = function (country) {
 //   const request = new XMLHttpRequest();
@@ -46,24 +70,6 @@ const countriesContainer = document.querySelector('.countries');
 // getcountryDate('Somalia');
 
 //neigbor counry
-const renderCountry = function (data, className = '') {
-  const languages = Object.values(data.languages);
-  const currencies = Object.values(data.currencies);
-  const html = ` <article class="country ${className}">
-    <img class="country__img" src="${data.flags.png}" />
-    <div class="country__data">
-      <h3 class="country__name">${data.altSpellings[2]}</h3>
-      <h4 class="country__region">${data.region}</h4>
-      <p class="country__row"><span>👫</span>${(
-        +data.population / 1000000
-      ).toFixed(1)}</p>
-      <p class="country__row"><span>🗣️</span>${languages[0]}</p>
-      <p class="country__row"><span>💰</span>${currencies[0].name}</p>
-    </div>
-  </article>`;
-  countriesContainer.insertAdjacentHTML('beforeend', html);
-  countriesContainer.style.opacity = 1;
-};
 
 //AJAX CALL NR1
 // const getCountryAndNeighbour = function (country) {
@@ -109,12 +115,36 @@ const renderCountry = function (data, className = '') {
 // };
 
 //we fetch data
+
 const getCountryData = function (country) {
+  // Fetch data for the given country
+  //country 1
   fetch(`https://restcountries.com/v3.1/name/${country}?fullText=true`)
-    //we get reponse
     .then(response => response.json())
-    //we take that data and render country
-    .then(data => renderCountry(data[0]));
+    .then(data => {
+      renderCountry(data[0]);
+      const neighbour = data[0].borders[0];
+
+      if (!neighbour) return;
+
+      //country 2
+      // Fetch data for the neighboring country
+      return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`);
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data[0], 'neighbour'))
+    .catch(err => {
+      console.error(`${err}💥💥💥`);
+
+      renderError(`somehin went wrong 💥💥💥 ${err.message}.Try again`);
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
 };
 
-getCountryData('somalia');
+// Call the function with the country name "somalia"
+btn.addEventListener('click', function () {
+  getCountryData('somalia');
+});
+getCountryData('kedadanya');
