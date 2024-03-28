@@ -66,32 +66,55 @@ const renderCountry = function (data, className = '') {
 };
 
 //AJAX CALL NR1
-const getCountryAndNeighbour = function (country) {
-  const request = new XMLHttpRequest();
-  request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
-  request.send();
-  request.addEventListener('load', function () {
-    const [data] = JSON.parse(this.responseText);
-    console.log(data);
-    //Render country 1
-    renderCountry(data);
+// const getCountryAndNeighbour = function (country) {
+//   const request = new XMLHttpRequest();
+//   request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
+//   request.send();
+//   request.addEventListener('load', function () {
+//     const [data] = JSON.parse(this.responseText);
+//     console.log(data);
+//     //Render country 1
+//     renderCountry(data);
 
-    //Get Neighbour Country
-    const [neighbour] = data.borders;
-    console.log(neighbour);
-    if (!neighbour) return;
-    // AJax call 2
-    const request2 = new XMLHttpRequest();
-    request2.open('GET', `https://restcountries.com/v3.1/alpha/${neighbour}`);
-    request2.send();
+//     //Get Neighbour Country
+//     const [neighbour] = data.borders;
+//     console.log(neighbour);
+//     if (!neighbour) return;
+//     // AJax call 2
+//     const request2 = new XMLHttpRequest();
+//     request2.open('GET', `https://restcountries.com/v3.1/alpha/${neighbour}`);
+//     request2.send();
 
-    //nested call back hadaa doonayso inaad ogaato dalkaaga ka la jaarka ka lasii jaarkaa function kan hoose anyunbad tiem out ku xidhi doonta
+//     //nested call back hadaa doonayso inaad ogaato dalkaaga ka la jaarka ka lasii jaarkaa function kan hoose anyunbad tiem out ku xidhi doonta
 
-    request2.addEventListener('load', function () {
-      const [data2] = JSON.parse(this.responseText);
-      console.log(data2);
-      renderCountry(data2, 'neighbour');
-    });
-  });
+//     request2.addEventListener('load', function () {
+//       const [data2] = JSON.parse(this.responseText);
+//       console.log(data2);
+//       renderCountry(data2, 'neighbour');
+//     });
+//   });
+// };
+// getCountryAndNeighbour('somalia');
+
+// const getCountryData = function (country) {
+//   fetch(`https://restcountries.com/v3.1/name/${country}?fullText=true`)
+//     .then(function (response) {
+//       console.log(response);
+//       return response.json(); // Added return here
+//     })
+//     .then(function (data) {
+//       console.log(data);
+//       renderCountry(data[1]);
+//     });
+// };
+
+//we fetch data
+const getCountryData = function (country) {
+  fetch(`https://restcountries.com/v3.1/name/${country}?fullText=true`)
+    //we get reponse
+    .then(response => response.json())
+    //we take that data and render country
+    .then(data => renderCountry(data[0]));
 };
-getCountryAndNeighbour('somalia');
+
+getCountryData('somalia');
