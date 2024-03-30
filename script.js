@@ -205,5 +205,34 @@ const getCountryData = function (country) {
 btn.addEventListener('click', function () {
   getCountryData('somalia');
 });
-//test one
-getCountryData('Australia');
+// //test one
+// getCountryData('Australia');
+//Geolocation
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    navigator.geolocation.getCurrentPosition(
+      position => resolve(position),
+      err => reject(new Error(`Please allow your location. ${err}`))
+    );
+  });
+};
+const whereAmI = async function (country) {
+  const pos = await getPosition();
+  const { latitude: lat, longtitude: lng } = pos.coords;
+  // Reverse geocoding
+  const resGeo = await fetch(
+    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+  );
+  const datGeo = await resGeo.json();
+  console.log(datGeo);
+
+  const res = await fetch(
+    `https://restcountries.com/v3.1/name/${country}?fullText=true`
+  );
+  const data = await res.json();
+  console.log(data);
+  renderCountry(data[0]);
+};
+
+whereAmI('kenya');
+console.log('FIRST');
