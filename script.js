@@ -14,7 +14,7 @@ const renderCountry = function (data, className = '') {
       <p class="country__row"><span>👫</span>${(
         +data.population / 1000000
       ).toFixed(1)}</p>
-      <p class="country__row"><span>🗣️</span>${languages[0]}</p>
+      <p class="country__row"><span>🗣️</span>${languages[1]}</p>
       <p class="country__row"><span>💰</span>${currencies[0].name}</p>
     </div>
   </article>`;
